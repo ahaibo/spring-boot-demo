@@ -1,0 +1,76 @@
+spring:
+    profiles:
+      # 表示所用配置文件为application-dev.yml
+      active: dev
+
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/hai?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
+        password: 123456
+
+        tomcat:
+          initialSize: 1
+          min-idle: 1
+          max-idle: 20
+          max-wait: 60000
+          timeBetweenEvictionRunsMillis: 60000
+          minEvictableIdleTimeMillis: 30000
+          validationQuery: SELECT 1
+          testWhileIdle: true
+          testOnBorrow: false
+          testOnReturn: false
+    redis:
+        # redis数据库索引（默认为0），我们使用索引为3的数据库，避免和其他数据库冲突
+        # database: 3
+        database: 0
+        # redis服务器地址（默认为localhost）
+        host: localhost
+        # redis端口（默认为6379）
+        port: 6379
+        # redis访问密码（默认为空）
+        password:
+        # redis连接超时时间（单位为毫秒）
+        timeout: 0
+        # redis连接池配置
+        pool:
+          # 最大可用连接数（默认为8，负数表示无限）
+          max-active: 8
+          # 最大空闲连接数（默认为8，负数表示无限）
+          max-idle: 8
+          # 最小空闲连接数（默认为0，该值只有为正数才有作用）
+          min-idle: 0
+          # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
+          max-wait: -1
+    #热部署配置
+    #当我们修改了java类后，IDEA默认是不自动编译的，而spring-boot-devtools又是监测classpath下的文件发生变化才会重启应用，所以需要设置IDEA的自动编译：
+    #1.File-Settings-Compiler-Build Project automatically
+    #2.ctrl + shift + alt + /,选择Registry,勾上 Compiler autoMake allow when app running
+    devtools:
+        restart:
+            #热部署生效
+            enabled: true
+            #设置重启的目录
+            #additional-paths: src/main/java
+            #classpath目录下的WEB-INF文件夹内容修改不重启
+            exclude: WEB-INF/**
+
+# mybatis配置
+mybatis:
+  config-location: classpath:mybatis-config.xml
+
+logging:
+#  file: logs/sbmr.log
+#  level: debug
+  config: classpath:logback-spring.xml
+#
+---
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:hai
+    username: root
+    password: 123456
+    driver-class-name: org.h2.Driver
+    schema: classpath:schema.sql
+    data: classpath:data.sql
